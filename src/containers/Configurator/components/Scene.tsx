@@ -82,8 +82,8 @@ function Scene( { colors }: IProps ) {
               roughness: ( ( obj as Mesh ).material as MeshStandardMaterial ).roughness,
               metalness: ( ( obj as Mesh ).material as MeshStandardMaterial ).metalness,
               transparent: true,
-              transmission: 0.97,
-              reflectivity: 0.2,
+              transmission: 0.95,
+              reflectivity: 0.4,
               envMapIntensity: 0.1
             } as MeshPhysicalMaterialParameters );
         }

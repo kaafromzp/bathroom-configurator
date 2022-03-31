@@ -15,7 +15,7 @@ let mouseCoords = { x: 0, y: 0 };
 function Controls() {
   const { gl, camera, scene } = useThree();
   const dispatch = useAppDispatch();
-
+  ( window as any ).camera = camera;
   const onPointerUp = ( event: PointerEvent ) => {
     if (
       ( Math.pow( mouseCoords.y - event.clientY, 2 ) +
