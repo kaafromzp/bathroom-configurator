@@ -1,11 +1,10 @@
-// import { useGLTF } from '@react-three/drei';
 import { useLoader, useThree } from '@react-three/fiber';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import {
   Color,
   DoubleSide,
   Group,
-  Material,
   Mesh,
   MeshPhysicalMaterial,
   MeshPhysicalMaterialParameters,
@@ -15,24 +14,24 @@ import {
   Texture,
   TextureLoader
 } from 'three';
-function Scene() {
-  // const { scene } = useGLTF( `${ process.env.PUBLIC_URL }scene.glb`, true );
+import { generateUUID } from 'three/src/math/MathUtils';
+import { ConfiguratorState } from '../redux';
+
+interface IOwnProps {};
+interface IProps extends IReduxProps, IOwnProps {};
+
+function Scene( { colors }: IProps ) {
+  const [uuid, setUuid] = useState( generateUUID() );
   // eslint-disable-next-line no-process-env
   const scene = useLoader( ObjectLoader as any, `${ process.env.PUBLIC_URL }scene.json` ) as Group;
   // eslint-disable-next-line no-process-env
   const envMap = useLoader( TextureLoader, `${ process.env.PUBLIC_URL }envMap.jpg` );
   const { gl, scene: s } = useThree();
+  ( window as any ).scene = s;
   const convertedScene = useMemo( () => {
-    const convertedScene = new Group();
-    // for ( let i = 0, l = scene.children.length; i < l; i += 1 ) {
-    // console.log( scene.children[ i ] );
-    convertedScene.attach( scene.children[ 1 ].clone() );
-    // }
-
-    convertedScene.traverse( ( obj ) => {
+    setUuid( generateUUID() );
+    scene.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
-        ( obj as Mesh ).layers.enable( 2 );
-        console.log( ( obj as Mesh ).material );
         ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
         ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.3;
         ( ( obj as Mesh ).material as MeshStandardMaterial ).emissive = new Color( 0, 0, 0 );
@@ -42,11 +41,18 @@ function Scene() {
 
         if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'ceiling' ) ||
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'celling' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'table_bottom' )
         ) {
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.r =
+          colors[ obj.uuid ] ? colors[ obj.uuid ].r / 255 : 1;
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.g =
+          colors[ obj.uuid ] ? colors[ obj.uuid ].g / 255 : 1;
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.b =
+          colors[ obj.uuid ] ? colors[ obj.uuid ].b / 255 : 1;
+
+          ( obj as Mesh ).layers.enable( 2 );
           ( ( obj as Mesh ).material as MeshStandardMaterial ).roughness = 0.05;
-          // ( ( obj as Mesh ).material as MeshStandardMaterial ).emissive = new Color( 0, 0, 0 );
         }
         if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'table_bottom' )
         ) {
@@ -89,10 +95,6 @@ function Scene() {
       const hdrCubeRenderTarget = gen.fromEquirectangular( envMap );
       envMap.dispose();
       gen.dispose();
-
-      // envMap.mapping = EquirectangularRefractionMapping;
-      // ( envMap as Texture ).needsUpdate = true;
-      console.log( s );
       s.environment = hdrCubeRenderTarget.texture;
     }
     // const box = new Box3().setFromObject( convertedScene, true );
@@ -102,15 +104,28 @@ function Scene() {
     // box.getSize( size );
     // const position = new Vector3().copy( ( center.clone().multiplyScalar( -1 ) ) );
 
-    return convertedScene;
+    return scene;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scene, envMap] );
+  }, [
+    scene,
+    envMap,
+    colors
+  ] );
 
   return (
     <primitive
+      uuid = { uuid }
       object={ convertedScene }
     />
   );
 }
 
-export default Scene;
+function mapStateToProps( state: { configurator : ConfiguratorState} ) {
+  const { configurator: { colors } } = state;
+
+  return { colors };
+}
+
+const connector = connect( mapStateToProps );
+type IReduxProps = ConnectedProps<typeof connector>
+export default connector( Scene );

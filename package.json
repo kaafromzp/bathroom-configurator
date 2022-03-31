@@ -1,5 +1,5 @@
 {
-  "name": "cra",
+  "name": "bathroom_configurator",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,7 +15,9 @@
     "@types/react-dom": "^16.9.14",
     "@types/react-redux": "^7.1.23",
     "react": "^17.0.2",
+    "react-color": "^2.19.3",
     "react-dom": "^17.0.2",
+    "react-modal": "^3.14.4",
     "react-redux": "^7.2.6",
     "react-scripts": "5.0.0",
     "three": "^0.139.0",
@@ -66,7 +68,8 @@
         2,
         2,
         {
-          "checkAttributes": true, "indentLogicalExpressions": true
+          "checkAttributes": true,
+          "indentLogicalExpressions": true
         }
       ],
       "jsx-a11y/no-static-element-interactions": 0,
@@ -99,7 +102,9 @@
       "array-callback-return": "off",
       "array-element-newline": [
         "error",
-        { "multiline": true, "minItems": 3
+        {
+          "multiline": true,
+          "minItems": 3
         }
       ],
       "arrow-body-style": "off",
@@ -163,7 +168,8 @@
       ],
       "dot-notation": [
         "error",
-        { "allowKeywords": true
+        {
+          "allowKeywords": true
         }
       ],
       "eol-last": [
@@ -191,7 +197,8 @@
       "@typescript-eslint/indent": [
         "error",
         2,
-        { "SwitchCase": 1
+        {
+          "SwitchCase": 1
         }
       ],
       "init-declarations": "off",
@@ -219,7 +226,9 @@
       ],
       "max-lines": [
         "error",
-        { "max": 2000, "skipBlankLines": true
+        {
+          "max": 2000,
+          "skipBlankLines": true
         }
       ],
       "max-lines-per-function": "off",
@@ -273,7 +282,8 @@
       "no-multi-str": "error",
       "no-multiple-empty-lines": [
         "error",
-        { "max": 2
+        {
+          "max": 2
         }
       ],
       "no-native-reassign": "error",
@@ -334,13 +344,17 @@
       "object-curly-newline": [
         "error",
         {
-          "ObjectExpression": { "multiline": true
+          "ObjectExpression": {
+            "multiline": true
           },
-          "ObjectPattern": { "multiline": true
+          "ObjectPattern": {
+            "multiline": true
           },
-          "ImportDeclaration": { "multiline": true
+          "ImportDeclaration": {
+            "multiline": true
           },
-          "ExportDeclaration": { "multiline": true
+          "ExportDeclaration": {
+            "multiline": true
           }
         }
       ],
@@ -350,7 +364,8 @@
       ],
       "object-property-newline": [
         "error",
-        { "allowAllPropertiesOnSameLine": true
+        {
+          "allowAllPropertiesOnSameLine": true
         }
       ],
       "object-shorthand": "error",
@@ -363,13 +378,25 @@
       "padded-blocks": "off",
       "padding-line-between-statements": [
         "error",
-        { "blankLine": "always", "prev": "if", "next": "*"
+        {
+          "blankLine": "always",
+          "prev": "if",
+          "next": "*"
         },
-        { "blankLine": "any", "prev": "if", "next": "if"
+        {
+          "blankLine": "any",
+          "prev": "if",
+          "next": "if"
         },
-        { "blankLine": "always", "prev": "switch", "next": "*"
+        {
+          "blankLine": "always",
+          "prev": "switch",
+          "next": "*"
         },
-        { "blankLine": "always", "prev": "for", "next": "*"
+        {
+          "blankLine": "always",
+          "prev": "for",
+          "next": "*"
         }
       ],
       "prefer-arrow-callback": "error",
@@ -430,7 +457,9 @@
       "react/jsx-curly-spacing": [
         2,
         "always",
-        { "spacing": { "objectLiterals": "always"
+        {
+          "spacing": {
+            "objectLiterals": "always"
           }
         }
       ],
@@ -460,6 +489,8 @@
     ]
   },
   "devDependencies": {
+    "@types/react-color": "^3.0.6",
+    "@types/react-modal": "^3.13.1",
     "@types/three": "^0.139.0"
   }
 }
