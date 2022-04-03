@@ -3,10 +3,12 @@ import React, { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../../redux/store';
 import { Layers, sRGBEncoding } from 'three';
-import Scene from './components/Scene';
+// import Scene from './components/Scene';
 import Controls from './components/Controls';
 import Composer from './components/Composer';
 import Loader from '../Loader';
+import Geometry from './components/Geometry';
+import Materials from './components/Materials';
 
 const layers = new Layers();
 layers.disableAll();
@@ -37,50 +39,19 @@ function Configurator() {
         raycaster={ { layers } }
       >
         <color attach='background' args={ [
-          0,
-          0,
-          0
+          1,
+          1,
+          1
         ] } />
         <Provider store={ store }>
           <Composer>
-            <Suspense fallback={
-              <Loader/>
-              //  <>
-              //    <ambientLight intensity={ 0.5 } />
-              //    <directionalLight position={ [
-              //      10,
-              //      10,
-              //      5
-              //    ] } intensity={ 1 } />
-              //    <pointLight position={ [
-              //      0,
-              //      -10,
-              //      5
-              //    ] } intensity={ 1 } />
-              //    <Sphere visible position={ [
-              //      0,
-              //      0,
-              //      0
-              //    ] } args={ [
-              //      1,
-              //      16,
-              //      200
-              //    ] }>
-              //      <MeshDistortMaterial
-              //        color='#00A38D'
-              //        attach='material'
-              //        distort={ 0.5 }
-              //        speed={ 2 }
-              //        roughness={ 0 }
-              //        alphaWrite={ undefined }
-              //        refractionRatio={ undefined }
-              //      />
-              //    </Sphere>
-              //  </>
-            }>
-              <Scene />
-              <Controls />
+            <Suspense fallback={ <Loader/> }>
+              <Geometry/>
             </Suspense>
+            {/* <Suspense fallback={ null }> */}
+            <Materials/>
+            {/* </Suspense> */}
+            <Controls />
           </Composer>
         </Provider>
       </Canvas>;
@@ -89,3 +60,5 @@ function Configurator() {
 }
 
 export default Configurator;
+
+
