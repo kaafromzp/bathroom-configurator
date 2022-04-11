@@ -9,13 +9,21 @@ import Composer from './components/Composer';
 import Loader from '../Loader';
 import Geometry from './components/Geometry';
 import Materials from './components/Materials';
+import { useAppDispatch } from '../../redux/hooks';
+import { setPath } from './redux';
 
 const layers = new Layers();
 layers.disableAll();
 
 function Configurator() {
+  const dispatch = useAppDispatch();
+
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
+      <div style = { { position: 'absolute', zIndex: 10 } }>
+        <button onClick = { () => dispatch( setPath( 'assets/scene1/' ) ) }/>
+        <button onClick = { () => dispatch( setPath( 'assets/scene2/' ) ) }/>
+      </div>
       <Canvas
         camera = { {
           position: [

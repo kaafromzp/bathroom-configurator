@@ -1,30 +1,28 @@
+import { useGLTF } from '@react-three/drei';
 import { useLoader, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
-  Group,
+  CanvasTexture,
+  ImageBitmapLoader,
   Mesh,
   MeshStandardMaterial,
-  ObjectLoader,
   PMREMGenerator,
-  Scene,
-  TextureLoader
+  Scene
 } from 'three';
 import { ConfiguratorState } from '../redux';
 
 interface IOwnProps {};
 interface IProps extends IReduxProps, IOwnProps {};
 
-function Geometry( { colors }: IProps ) {
-  console.log( 'geometry render' );
+function Geometry( { colors, path }: IProps ) {
 
-  const model = useLoader( ObjectLoader as any, '/assets/scene.json' ) as Group;
+  const { scene: model } = useGLTF( `${ path }scene.glb`, true );
   const { set } = useThree();
-  const envMap = useLoader( TextureLoader, '/assets/envMap.jpg' );
-  const { gl, scene } = useThree();
-
+  const envMap = useLoader( ImageBitmapLoader, `${ path }envMap.jpg` );
+  const { gl, scene, invalidate } = useThree();
+  ( window as any ).scene = scene;
   useMemo( () => {
-    console.log( 'useMemo model', model );
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
         // ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
@@ -84,7 +82,7 @@ function Geometry( { colors }: IProps ) {
         // }
       }
     } );
-
+    invalidate();
     // const box = new Box3().setFromObject( convertedScene, true );
     // const center = new Vector3();
     // box.getCenter( center );
@@ -97,12 +95,11 @@ function Geometry( { colors }: IProps ) {
   }, [colors] );
 
   useEffect( () => {
-    console.log( 'useMemo model', model );
     // setUuid( generateUUID() );
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
-        // ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
-        // ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.3;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.7;
         // ( ( obj as Mesh ).material as MeshStandardMaterial ).emissive = new Color( 0, 0, 0 );
         // if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).metalness > 0.9 ) {
         //   ( ( obj as Mesh ).material as MeshStandardMaterial ).metalness = 0.9;
@@ -173,12 +170,12 @@ function Geometry( { colors }: IProps ) {
   }, [model] );
 
   useMemo( () => {
-    console.log( 'useMemo envMap', envMap );
     if ( envMap ) {
       const gen = new PMREMGenerator( gl );
       gen.compileEquirectangularShader();
-      const hdrCubeRenderTarget = gen.fromEquirectangular( envMap );
-      envMap.dispose();
+      const texture = new CanvasTexture( envMap );
+      const hdrCubeRenderTarget = gen.fromEquirectangular( texture );
+      texture.dispose();
       gen.dispose();
       scene.environment = hdrCubeRenderTarget.texture;
     }
@@ -194,9 +191,9 @@ function Geometry( { colors }: IProps ) {
 }
 
 function mapStateToProps( state: { configurator : ConfiguratorState} ) {
-  const { configurator: { colors } } = state;
+  const { configurator: { colors, path } } = state;
 
-  return { colors };
+  return { colors, path };
 }
 
 const connector = connect( mapStateToProps );

@@ -1,184 +1,127 @@
 import { useGraph, useThree } from '@react-three/fiber';
 import React, { useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import {
+  CanvasTexture,
+  ImageBitmapLoader,
   MeshStandardMaterial,
-  Texture,
-  TextureLoader,
-  Vector2
+  RepeatWrapping,
+  Texture
 } from 'three';
-// interface IOwnProps {};
-// interface IProps = IOwnProps;
+import { ConfiguratorState } from '../redux';
 
-const texturesPaths = [
-  // "1683F37D-E40F-46B3-B2FC-04BF0C1D2516",
-  'assets/lightMaps/shower.jpg',
-  'assets/textures/shower_n.jpg',
-  'assets/lightMaps/door.jpg',
-  'assets/textures/leave_3_d.jpg',
-  'assets/lightMaps/flowers.jpg',
-  'assets/textures/leave_3_n.png',
-  'assets/textures/leave_1_d.png',
-  // "9E424DD2-1BD1-42A6-B10E-8744CCEEFC0E"
-  // 'assets/lightMaps/flowers.jpg',
-  // [['leave_1', 'lightMap']],
-  'assets/textures/leave_1_n.png',
-  'assets/textures/leave_2_d.png',
-  // '1BF237A6-2DC7-4FD0-AD5D-3F2037321BFB',
-  // 'assets/lightMaps/flowers.jpg',
-  // [['leave_2', 'lightMap']],
-  'assets/textures/leave_2_n.png',
-  'assets/textures/stem_d.jpg',
-  'assets/lightmaps/flower_container.jpg',
-  'assets/textures/ground_d.jpg',
-  'assets/textures/ground_n.jpg',
-  'assets/lightmaps/sinks_fausets.jpg',
-  'assets/textures/noise_n.jpg',
-  'assets/textures/noise.jpg',
-  'assets/textures/words.jpg',
-  'assets/lightmaps/sinks.jpg',
-  // '013D7F00-1EB7-4840-B144-1DBDA6A98DEF',
-  // sinks normalMal
-  'assets/textures/noise_r.jpg',
-  'assets/lightmaps/bottles.jpg',
-  'assets/lightmaps/decorate.jpg',
-  // '68620407-F721-4022-8AB1-4CB0959D5490',
-  // table_handles normalMap
-  'assets/textures/wood_d.jpg',
-  'assets/lightmaps/table_top.jpg',
-  'assets/textures/table_r.jpg',
-  'assets/lightmaps/table_bottom.jpg',
-  'assets/textures/noise-1.jpg',
-  'assets/lightmaps/celling.jpg',
-  'assets/textures/floor.jpg',
-  'assets/lightmaps/floor.jpg',
-  'assets/textures/wall_front_d.jpg',
-  'assets/lightmaps/wall_front.jpg',
-  'assets/textures/wall_front_n.jpg',
-  'assets/lightmaps/wall_back.jpg',
-  'assets/textures/wall_bottom_d.jpg'
-];
-const texturesApplyData = [
-// "1683F37D-E40F-46B3-B2FC-04BF0C1D2516",
-  [['shower_main', 'lightMap']],
-  [['shower_main', 'normalMap']],
-  [['door_glass', 'lightMap']],
-  [['leave_3', 'map']],
-  [
-    ['leave_1', 'lightMap'],
-    ['leave_2', 'lightMap'],
-    ['leave_3', 'lightMap']
-  ],
-  [['leave_3', 'normalMap']],
-  [['leave_1', 'map']],
-  // "9E424DD2-1BD1-42A6-B10E-8744CCEEFC0E"
-  // 'assets/lightMaps/flowers.jpg',
-  // [['leave_1', 'lightMap']],
-  [['leave_1', 'normalMap']],
-  [['leave_2', 'map']],
-  // '1BF237A6-2DC7-4FD0-AD5D-3F2037321BFB',
-  // 'assets/lightMaps/flowers.jpg',
-  // [['leave_2', 'lightMap']],
-  [['leave_2', 'normalMap']],
-  [['leaves_stem', 'map']],
-  [['leaves_container', 'lightMap']],
-  [['leaves_ground', 'map']],
-  [['leaves_ground', 'normalMap']],
-  [['sinks_faucet', 'lightMap']],
-  [
-    ['leaves_container', 'normalMap'],
-    ['sinks_faucet', 'normalMap'],
-    ['sinks', 'normalMap'],
-    ['table_handles', 'normalMap']
-  ],
-  [
-    ['sinks_faucet', 'metalnessMap'],
-    ['sinks_faucet', 'roughnessMap'],
-    ['walls_front_bottom', 'map']
-  ],
-  [['sinks_faucet_logos', 'map']],
-  [['sinks', 'lightMap']],
-  // '013D7F00-1EB7-4840-B144-1DBDA6A98DEF',
-  // sinks normalMal
-  [['sinks', 'roughnessMap'], ['sinks', 'metalnessMap']],
-  [['bottle_plastic_transparent', 'lightMap']],
-  [
-    ['lamps_top', 'lightMap'],
-    ['lamps_chrome', 'lightMap'],
-    ['lamps_glass', 'lightMap'],
-    ['mirror_body', 'lightMap']
-  ],
-  // '68620407-F721-4022-8AB1-4CB0959D5490',
-  // table_handles normalMap
-  [['table_top', 'map']],
-  [['table_top', 'lightMap']],
-  [['table_top', 'roughnessMap'], ['table_top', 'metalnessMap']],
-  [['table_bottom', 'lightMap']],
-  [['table_bottom', 'normalMap']],
-  [['celling', 'lightMap']],
-  [['floor', 'map']],
-  [['floor', 'lightMap']],
-  [['walls_front', 'map']],
-  [['walls_front', 'lightMap']],
-  [['walls_front', 'normalMap']],
-  [['walls_back', 'lightMap'], ['walls_back_bottom', 'lightMap']],
-  [['walls_back_bottom', 'map']]
-] as [string, 'map'| 'normalMap' | 'lightMap' | 'roughnessMap' | 'metalnessMap'][][];
-const v0 = new Vector2();
-const v1 = new Vector2( 1, 1 );
+interface IOwnProps {};
+interface IProps extends IReduxProps, IOwnProps {};
 
-function Materials( ) {
-  console.log( 'materials render' );
+function Materials( { path }:IProps ) {
   useEffect( () => {
-    const loader = new TextureLoader();
-    Promise.all( texturesPaths.map( ( path ) => loader.load( path ) ) ).then(
-      ( t ) => {
-        setTextures( t );
-      }
-    );
-    ;
-  }, [] );
-  const [textures, setTextures] = useState( [] as Texture[] );
-  const { scene } = useThree();
+    const loaderDefault = new ImageBitmapLoader();
+    const loaderFlipped = new ImageBitmapLoader();
+    loaderFlipped.setOptions( { imageOrientation: 'flipY' } );
+    const a = async () => {
+      const response = await fetch( `${ path }paths.json`
+        , {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        }
+      );
+      const paths = await response.json() as string[];
+      const imageBitmaps = await Promise.all(
+        ( paths as unknown as string[] ).map(
+          ( filePath ) => (
+            filePath.includes( 'lightMap' )
+              ? loaderFlipped
+              : loaderDefault
+          ).loadAsync( path + filePath )
+        )
+      );
+      setImageBitmaps( imageBitmaps );
+    };
+    a();
+  }, [path] );
+  const [imageBitmaps, setImageBitmaps] = useState( [] as ImageBitmap[] );
+  const { scene, invalidate } = useThree();
   const { materials } = useGraph( scene );
 
   useEffect( () => {
-    console.log( 'useMemo textures', textures, materials );
-    const arrMaterials = Object.values( materials );
-    for ( let i = 0, l1 = textures.length; i < l1; i += 1 ) {
-      if ( textures[ i ] && textures[ i ].isTexture ) {
-        for ( let j = 0, l2 = arrMaterials.length; j < l2; j += 1 ) {
-          for ( let k = 0, l3 = texturesApplyData[ i ].length; k < l3; k += 1 ) {
-            const material = arrMaterials[ j ] as MeshStandardMaterial;
-            if ( material.name === texturesApplyData[ i ][ k ][ 0 ] ) {
-              textures[ i ].mapping = 300;
-              textures[ i ].repeat = v1;
-              textures[ i ].offset = v0;
-              textures[ i ].center = v0;
-              textures[ i ].rotation = 0;
-              textures[ i ].wrapS = 1001;
-              textures[ i ].wrapT = 1001;
-              textures[ i ].format = 1023;
-              textures[ i ].type = 1009;
-              textures[ i ].encoding = texturesPaths[ i ].endsWith( '.png' ) ? 3000 : 3001;
-              textures[ i ].minFilter = 1008;
-              textures[ i ].magFilter = 1006;
-              textures[ i ].anisotropy = 1;
-              textures[ i ].flipY = true;
-              textures[ i ].premultiplyAlpha = false;
-              textures[ i ].unpackAlignment = 4;
-              material[ texturesApplyData[ i ][ k ][ 1 ] ] = textures[ i ];
-              textures[ i ].needsUpdate = true;
-              material.needsUpdate = true;
+    const a = async () => {
+      // @ts-ignore
+      const response = await fetch( `${ path }applyData.json`
+        , {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        }
+      );
+      const applyData = await response.json() as
+       [string[], 'map'| 'normalMap' | 'lightMap' | 'roughnessMap' | 'metalnessMap'][];
+      const textures = imageBitmaps.map( ( imageBitmap ) => new CanvasTexture( imageBitmap ) );
+      const arrMaterials = Object.values( materials );
+      for ( let i = 0, l1 = textures.length; i < l1; i += 1 ) {
+        if ( textures[ i ] && textures[ i ].isTexture ) {
+          for ( let j = 0, l2 = arrMaterials.length; j < l2; j += 1 ) {
+            for ( let k = 0, l3 = applyData[ i ][ 0 ].length; k < l3; k += 1 ) {
+              const material = arrMaterials[ j ] as MeshStandardMaterial;
+              if ( material.name === applyData[ i ][ 0 ][ k ] ) {
+                const prevTexture = material[ applyData[ i ][ 1 ] ] as Texture;
+                if ( prevTexture ) {
+                  textures[ i ].mapping = prevTexture.mapping;
+                  textures[ i ].repeat = prevTexture.repeat;
+                  textures[ i ].offset = prevTexture.offset;
+                  textures[ i ].center = prevTexture.center;
+                  textures[ i ].rotation = prevTexture.rotation;
+                  textures[ i ].wrapS = prevTexture.wrapS;
+                  textures[ i ].wrapT = prevTexture.wrapT;
+                  textures[ i ].format = prevTexture.format;
+                  textures[ i ].type = prevTexture.type;
+                  textures[ i ].encoding = prevTexture.encoding;
+                  textures[ i ].minFilter = prevTexture.minFilter;
+                  textures[ i ].magFilter = prevTexture.magFilter;
+                  textures[ i ].anisotropy = prevTexture.anisotropy;
+                  textures[ i ].flipY = prevTexture.flipY;
+                  textures[ i ].premultiplyAlpha = prevTexture.premultiplyAlpha;
+                  textures[ i ].unpackAlignment = prevTexture.unpackAlignment;
+                } else {
+                  textures[ i ].wrapS = RepeatWrapping;
+                  textures[ i ].wrapT = RepeatWrapping;
+                }
+                // if ( applyData[ i ][ 1 ] === 'lightMap' ) {
+                //   textures[ i ].flipY = false;
+                //   // textures[ i ].wrapS = RepeatWrapping;
+                //   // textures[ i ].wrapT = RepeatWrapping;
+                // }
+
+                material[ applyData[ i ][ 1 ] ] = textures[ i ];
+                textures[ i ].needsUpdate = true;
+                material.needsUpdate = true;
+              }
             }
           }
         }
       }
-    }
-  }, [textures, materials] );
-  console.log( 'scene render' );
+
+      invalidate();
+    };
+    a();
+  }, [
+    imageBitmaps,
+    materials,
+    path
+  ] );
 
   return null;
 }
 
-export default Materials;
+function mapStateToProps( state: { configurator : ConfiguratorState} ) {
+  const { configurator: { colors, path } } = state;
+
+  return { colors, path };
+}
+
+const connector = connect( mapStateToProps );
+type IReduxProps = ConnectedProps<typeof connector>
+export default connector( Materials );
 

@@ -6,11 +6,13 @@ export type colors = {[key: string]: RGBColor}
 export interface ConfiguratorState {
   selectedObject: string | null;
   colors: colors;
+  path: string;
 }
 
 const initialState: ConfiguratorState = {
   selectedObject: null,
-  colors: {}
+  colors: {},
+  path: 'assets/scene1/'
 };
 
 export const configuratorSlice = createSlice( {
@@ -26,6 +28,9 @@ export const configuratorSlice = createSlice( {
     },
     setColorById: ( state, action: PayloadAction<{uuid: string, color: RGBColor}> ) => {
       state.colors = { ...state.colors, [ action.payload.uuid ]: action.payload.color };
+    },
+    setPath: ( state, action: PayloadAction<string> ) => {
+      state.path = action.payload;
     }
   }
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -34,7 +39,7 @@ export const configuratorSlice = createSlice( {
   // }
 } );
 
-export const { setSelectedObject, setColors, setColorById } = configuratorSlice.actions;
+export const { setSelectedObject, setColors, setColorById, setPath } = configuratorSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
