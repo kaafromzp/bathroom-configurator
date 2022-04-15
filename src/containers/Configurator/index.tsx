@@ -20,10 +20,10 @@ function Configurator() {
 
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
-      <div style = { { position: 'absolute', zIndex: 10 } }>
+      {/* <div style = { { position: 'absolute', zIndex: 10 } }>
         <button onClick = { () => dispatch( setPath( 'assets/scene1/' ) ) }/>
         <button onClick = { () => dispatch( setPath( 'assets/scene2/' ) ) }/>
-      </div>
+      </div> */}
       <Canvas
         camera = { {
           position: [
