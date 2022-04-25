@@ -3,27 +3,20 @@ import React, { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../../redux/store';
 import { Layers, sRGBEncoding } from 'three';
-// import Scene from './components/Scene';
 import Controls from './components/Controls';
 import Composer from './components/Composer';
 import Loader from '../Loader';
 import Geometry from './components/Geometry';
 import Materials from './components/Materials';
-import { useAppDispatch } from '../../redux/hooks';
-import { setPath } from './redux';
+import { isMobile } from 'react-device-detect';
 
 const layers = new Layers();
 layers.disableAll();
 
 function Configurator() {
-  const dispatch = useAppDispatch();
 
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
-      {/* <div style = { { position: 'absolute', zIndex: 10 } }>
-        <button onClick = { () => dispatch( setPath( 'assets/scene1/' ) ) }/>
-        <button onClick = { () => dispatch( setPath( 'assets/scene2/' ) ) }/>
-      </div> */}
       <Canvas
         camera = { {
           position: [
@@ -38,9 +31,8 @@ function Configurator() {
           alpha: true,
           logarithmicDepthBuffer: true,
           physicallyCorrectLights: false,
-          precision: 'highp',
+          precision: isMobile ? 'mediump' : 'highp',
           outputEncoding: sRGBEncoding
-          //  toneMapping: ACESFilmicToneMapping
         } }
         frameloop='demand'
         dpr={ window.devicePixelRatio || 1 }
@@ -56,9 +48,7 @@ function Configurator() {
             <Suspense fallback={ <Loader/> }>
               <Geometry/>
             </Suspense>
-            {/* <Suspense fallback={ null }> */}
             <Materials/>
-            {/* </Suspense> */}
             <Controls />
           </Composer>
         </Provider>

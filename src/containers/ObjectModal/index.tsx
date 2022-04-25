@@ -4,7 +4,6 @@ import { useAppDispatch } from '../../redux/hooks';
 import { ConfiguratorState, setColorById, setSelectedObject } from '../Configurator/redux';
 import { ChromePicker, RGBColor } from 'react-color';
 import { useCallback } from 'react';
-// import './style.css';
 
 interface IOwnProps {};
 interface IProps extends IReduxProps, IOwnProps {};
@@ -25,7 +24,6 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
     <ReactModal
       ariaHideApp={ false }
       onRequestClose={ () => {
-        // console.log( 'onRequestClose' );
         dispatch( setSelectedObject( null ) );
       } }
       style={ {

@@ -88,11 +88,6 @@ function Materials( { path }:IProps ) {
                   textures[ i ].wrapS = RepeatWrapping;
                   textures[ i ].wrapT = RepeatWrapping;
                 }
-                // if ( applyData[ i ][ 1 ] === 'lightMap' ) {
-                //   textures[ i ].flipY = false;
-                //   // textures[ i ].wrapS = RepeatWrapping;
-                //   // textures[ i ].wrapT = RepeatWrapping;
-                // }
 
                 material[ applyData[ i ][ 1 ] ] = textures[ i ];
                 textures[ i ].needsUpdate = true;

@@ -27,18 +27,14 @@ function Controls() {
       const intersections = raycaster.intersectObjects( scene.children, true );
       if ( intersections[ 0 ] ) {
         dispatch( setSelectedObject( intersections[ 0 ].object.uuid ) );
-        // console.log( 'intersection', intersections[ 0 ].object.uuid );
       } else {
         dispatch( setSelectedObject( null ) );
-        // console.log( 'no intersection' );
       }
     }
   };
 
   const onPointerDown = ( event: PointerEvent ) => {
     mouseCoords = { x: event.clientX, y: event.clientY };
-    // console.log( 'onPointerDown', mouseCoords );
-
   };
 
   useEffect( () => {

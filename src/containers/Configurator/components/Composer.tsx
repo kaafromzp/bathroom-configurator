@@ -28,7 +28,6 @@ interface IProps extends IReduxProps, IOwnProps {}
 const Composer = ( { children, selectedObject }: IProps ) => {
   const { gl, scene, camera, size } = useThree();
   const composer = useRef( null as EffectComposer | null );
-  // const outline = useRef();
   const aspect = useMemo( () => new Vector2( size.width, size.height ), [size] );
   useEffect( () => ( composer.current as EffectComposer ).setSize( size.width, size.height ), [size] );
   useFrame( () => ( composer.current as EffectComposer ).render(), 1 );
