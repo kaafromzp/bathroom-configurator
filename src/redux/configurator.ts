@@ -29,6 +29,9 @@ export const configuratorSlice = createSlice( {
     setColorById: ( state, action: PayloadAction<{uuid: string, color: RGBColor}> ) => {
       state.colors = { ...state.colors, [ action.payload.uuid ]: action.payload.color };
     },
+    deleteColorById: ( state, action: PayloadAction<{uuid: string}> ) => {
+      Reflect.deleteProperty( state.colors, action.payload.uuid );
+    },
     setPath: ( state, action: PayloadAction<string> ) => {
       state.path = action.payload;
     }
@@ -39,7 +42,7 @@ export const configuratorSlice = createSlice( {
   // }
 } );
 
-export const { setSelectedObject, setColors, setColorById, setPath } = configuratorSlice.actions;
+export const { setSelectedObject, setColors, setColorById, deleteColorById, setPath } = configuratorSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

@@ -2,31 +2,26 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import ReactModal from 'react-modal';
-import { useAppDispatch, ConfiguratorState, setColorById, setSelectedObject } from '../../../redux';
-// import { ChromePicker, RGBColor } from 'react-color';
+import {
+  useAppDispatch,
+  ConfiguratorState,
+  setColorById,
+  deleteColorById,
+  setSelectedObject
+} from '../../../redux';
 import { SvgRender } from '../../SvgRender';
-// import pen from './pen.svg';
+import { getRandomInt } from '../../../helpers';
+import { RGBColor } from '../../../decl';
 import './index.css';
 import './input.css';
-
-export interface RGBColor {
-  a?: number | undefined;
-  b: number;
-  g: number;
-  r: number;
-}
 
 interface IOwnProps {};
 interface IProps extends IReduxProps, IOwnProps {};
 
-// const pen = 'src/icons/pen.svg';
 const pen = require( '../../../icons/pen.svg' ) as string;
 const dice = require( '../../../icons/dice.svg' ) as string;
 const rotate = require( '../../../icons/rotate-left.svg' ) as string;
 const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
-// const pen = ( require( '../../../icons/pen.svg' ) ).ReactComponent;
-// const closeIcon = 'src/icons/circle-xmark.svg';
-// const closeIcon = ( require( '../../../icons/circle-xmark.svg' ) ).ReactComponent;
 
 const ObjectModal = ( { selectedObject, color }: IProps ) => {
   const [showSettings, setShowSettings] = useState( false );
@@ -34,29 +29,35 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
-    // console.log( '%c handleClick', 'color:red', showSettings );
     setShowSettings( ( v ) => !v );
   };
 
-  const handleClickRandom = () => {
-    console.log( '%c handleClickRandom', 'color:red' );
-  };
-  const handleCancel = () => {
-    console.log( '%c handleCancel', 'color:green' );
-  };
+  const handleClickRandom = useCallback( () => {
+    dispatch( setColorById( {
+      uuid: selectedObject as string,
+      color: {
+        r: getRandomInt( 0, 255 ),
+        g: getRandomInt( 0, 255 ),
+        b: getRandomInt( 0, 255 )
+      }
+    } ) );
+  }, [dispatch, selectedObject] );
+
+  const handleClearColor = useCallback( () => {
+    dispatch( deleteColorById( { uuid: selectedObject as string } ) );
+  }, [dispatch, selectedObject] );
 
   const handleChangeColor = useCallback(
-    ( e: ChangeEvent<HTMLInputElement> ) => {
-    // ( { rgb: color }: { rgb: RGBColor } ) => {
-      console.log( '%c e', 'color:red', e );
-      console.log( '%c e.target', 'color:red', e.target );
-      console.log( '%c e.target.value', 'color:green', e.target.value );
+    ( letter: keyof RGBColor ) => ( e: ChangeEvent<HTMLInputElement> ) => {
       dispatch( setColorById( {
         uuid: selectedObject as string,
-        color
+        color: { ...color, [ letter ]: e.target.value }
       } ) );
-    },
-    [dispatch, selectedObject]
+    }, [
+      dispatch,
+      selectedObject,
+      color
+    ]
   );
 
   return (
@@ -68,39 +69,43 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
       overlayClassName={ 'myOverlay' }
       className={ 'myModal' }
       isOpen={ Boolean( selectedObject ) }
-      closeTimeoutMS={ 2000 }
+      closeTimeoutMS={ 10 }
     >
-      {/* <div className='editModalContent'> */}
       <SvgRender
         src={ showSettings ? closeIcon : pen }
         onClick ={ handleClick }
         wrapperClassName={ `svgRender ${ showSettings ? 'close' : 'edit' }` }
         style={ { width: '50px' } }
       />
-      {/* <Component
-          width='100%'
-          onClick ={ handleClick }
-          color={ 'red' }
-          // src={ pen }
-        /> */}
       {showSettings && (
         <div className='editModalContent'>
 
           <div className='color-inputs'>
             <div className='flex'>
-              <input type='range' onChange={ handleChangeColor } />
+              <input
+                type='range'
+                value={ color.r || 0 }
+                onChange={ handleChangeColor( 'r' ) }
+              />
               <span className='letter'>R</span>
             </div>
             <div className='flex'>
-              <input type='range'/>
+              <input
+                type='range'
+                value={ color.g || 0 }
+                onChange={ handleChangeColor( 'g' ) }
+              />
               <span className='letter'>G</span>
             </div>
             <div className='flex'>
-              <input type='range'/>
+              <input
+                type='range'
+                value={ color.b || 0 }
+                onChange={ handleChangeColor( 'b' ) }
+              />
               <span className='letter'>B</span>
             </div>
           </div>
-
           <SvgRender
             src={ dice }
             onClick ={ handleClickRandom }
@@ -109,14 +114,12 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
           />
           <SvgRender
             src={ rotate }
-            onClick ={ handleCancel }
+            onClick ={ handleClearColor }
             wrapperClassName='svgRender cancel'
             style={ { width: '50px' } }
           />
         </div>
-
       )}
-      {/* </div> */}
     </ReactModal >
   );
 };

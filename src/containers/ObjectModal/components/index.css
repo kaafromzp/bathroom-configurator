@@ -1,6 +1,5 @@
 .color-inputs {
   display: flex;
-  /* align-items: center; */
   flex-direction: column;
   color: #fff;
 }
@@ -8,14 +7,18 @@
 .color-inputs > div {
   display: flex;
   align-items: center;
-   /* flex-direction: column; */
   margin: 5px 0;
   min-width: 200px;
-
-  
 }
+
 .color-inputs > div .letter {
   margin-left: 10px;
+}
+
+.color-inputs * {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 .svgRender svg {
@@ -33,24 +36,15 @@
 }
 
 .myModal {
-  /* color: red */
   position: absolute;
-  /* width: 50px; */
-  /* padding: 4px; */
   top: 50%;
   left: 50%;
   display: flex;
   align-items: center;
   transform: translate(-25px, -50%);
-  /* right: right; */
-  /* bottom: auto; */
-  /* background-color: #fff; */
 }
 
 .myOverlay {
-  /* position: fixed;
-  width: 100vw;
-  height: 100vh; */
   top: 0;
   left: 0;
   right: 0;
@@ -74,26 +68,3 @@
 .ReactModal__Overlay--before-close{
   opacity: 0;
 }
-/* 
-style={ {
-        content: {
-          width: '50px',
-          padding: '4px',
-          top: '50%',
-          left: '50%',
-          right: 'right',
-          bottom: 'auto'
-          // onhover: { animation: 'fade' }
-
-          // marginRight: '-50%'
-          // transform: 'translate(0%, -50%)'
-        },
-        overlay: {
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'none'
-        }
-      } } */
