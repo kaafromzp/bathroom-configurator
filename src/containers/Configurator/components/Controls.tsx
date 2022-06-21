@@ -3,7 +3,7 @@ import { useThree } from '@react-three/fiber';
 import React, { useEffect } from 'react';
 import { Raycaster } from 'three';
 import { useAppDispatch } from '../../../redux/hooks';
-import { setSelectedObject } from '../redux';
+import { setSelectedObject } from '../../../redux/configurator';
 
 const raycaster = new Raycaster();
 raycaster.layers.set( 2 );

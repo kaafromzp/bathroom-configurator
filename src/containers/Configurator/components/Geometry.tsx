@@ -10,7 +10,7 @@ import {
   PMREMGenerator,
   Scene
 } from 'three';
-import { ConfiguratorState } from '../redux';
+import { ConfiguratorState } from '../../../redux/configurator';
 
 interface IOwnProps {};
 interface IProps extends IReduxProps, IOwnProps {};

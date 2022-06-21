@@ -10,7 +10,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader';
-import { ConfiguratorState } from '../redux';
+import { ConfiguratorState } from '../../../redux/configurator';
 extend( { EffectComposer, RenderPass, OutlinePass, ShaderPass } );
 declare global {
   namespace JSX {

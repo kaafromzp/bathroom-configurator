@@ -1,7 +1,7 @@
 import ReactModal from 'react-modal';
 import { connect, ConnectedProps } from 'react-redux';
 import { useAppDispatch } from '../../redux/hooks';
-import { ConfiguratorState, setColorById, setSelectedObject } from '../Configurator/redux';
+import { ConfiguratorState, setColorById, setSelectedObject } from '../../redux/configurator';
 import { ChromePicker, RGBColor } from 'react-color';
 import { useCallback } from 'react';
 
