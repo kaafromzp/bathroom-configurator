@@ -74,7 +74,7 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
       <SvgRender
         src={ showSettings ? closeIcon : pen }
         onClick ={ handleClick }
-        wrapperClassName={ `svgRender ${ showSettings ? 'close' : 'edit' }` }
+        wrapperClassName={ `svgRender swing ${ showSettings ? 'close' : 'edit' }` }
         style={ { width: '50px' } }
       />
       {showSettings && (
