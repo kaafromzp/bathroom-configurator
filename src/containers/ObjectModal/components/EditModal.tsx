@@ -83,6 +83,8 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
           <div className='color-inputs'>
             <div className='flex'>
               <input
+                min={ 0 }
+                max={ 255 }
                 type='range'
                 value={ color.r || 0 }
                 onChange={ handleChangeColor( 'r' ) }
@@ -91,6 +93,8 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
             </div>
             <div className='flex'>
               <input
+                min={ 0 }
+                max={ 255 }
                 type='range'
                 value={ color.g || 0 }
                 onChange={ handleChangeColor( 'g' ) }
@@ -99,6 +103,8 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
             </div>
             <div className='flex'>
               <input
+                min={ 0 }
+                max={ 255 }
                 type='range'
                 value={ color.b || 0 }
                 onChange={ handleChangeColor( 'b' ) }
