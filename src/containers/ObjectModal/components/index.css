@@ -92,6 +92,73 @@
 }
 
 .swing {
-  -webkit-animation: swing 1.5s linear 0s infinite;
-  animation: swing 1.5s linear 0s infinite;
+  -webkit-animation: swing 1s linear 0s infinite;
+  animation: swing 1s linear 0s infinite;
+}
+
+@-webkit-keyframes toggling {
+  0% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+  5% {
+    transform: scaleX(1.2);
+    -webkit-transform: scaleX(1.2);
+  }
+  10% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+  50% {
+    transform: translateY(50px) scale(0.1);
+    -webkit-transform: translateY(50px) scale(0.1);
+  }
+  75% {
+    transform: translateY(0px) scale(1.2);
+    -webkit-transform: translateY(0px) scale(1.2);
+  }
+  90% {
+    transform: scaleX(0.8);
+    -webkit-transform: scaleX(0.8);
+  }
+  95% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+}
+
+@keyframes toggling {
+  0% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+  5% {
+    transform: scaleX(1.2);
+    -webkit-transform: scaleX(1.2);
+  }
+  10% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+  50% {
+    transform: translateY(50px) scale(0.1);
+    -webkit-transform: translateY(50px) scale(0.1);
+  }
+  75% {
+    transform: translateY(0px) scale(1.2);
+    -webkit-transform: translateY(0px) scale(1.2);
+  }
+  90% {
+    transform: scaleX(0.8);
+    -webkit-transform: scaleX(0.8);
+  }
+  95% {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+  }
+}
+
+.toggling {
+  -webkit-animation: toggling 1s ease 0s 1;
+  animation: toggling 1s ease 0s 1;
 }

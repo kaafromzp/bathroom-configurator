@@ -12,6 +12,7 @@ import {
 import { SvgRender } from '../../SvgRender';
 import { getRandomInt } from '../../../helpers';
 import { RGBColor } from '../../../decl';
+
 import './index.css';
 import './input.css';
 
@@ -25,11 +26,16 @@ const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
 
 const ObjectModal = ( { selectedObject, color }: IProps ) => {
   const [showSettings, setShowSettings] = useState( false );
+  const [toggling, setToggling] = useState( false );
 
   const dispatch = useAppDispatch();
 
-  const handleClick = () => {
-    setShowSettings( ( v ) => !v );
+  const toggleIcon = () => {
+    setToggling( true );
+    setTimeout( () => {
+      setShowSettings( ( v ) => !v );
+      setToggling( false );
+    }, 700 );
   };
 
   const handleClickRandom = useCallback( () => {
@@ -71,15 +77,17 @@ const ObjectModal = ( { selectedObject, color }: IProps ) => {
       isOpen={ Boolean( selectedObject ) }
       closeTimeoutMS={ 10 }
     >
-      <SvgRender
-        src={ showSettings ? closeIcon : pen }
-        onClick ={ handleClick }
-        wrapperClassName={ `svgRender swing ${ showSettings ? 'close' : 'edit' }` }
-        style={ { width: '50px' } }
-      />
+      <div className={ `${ toggling ? 'toggling' : '' }` }>
+        <SvgRender
+          src={ showSettings ? closeIcon : pen }
+          onClick ={ toggleIcon }
+          wrapperClassName={ `svgRender swing ${ showSettings ? 'close' : 'edit' }` }
+          style={ { width: '50px' } }
+        />
+      </div>
+
       {showSettings && (
         <div className='editModalContent'>
-
           <div className='color-inputs'>
             <div className='flex'>
               <input
