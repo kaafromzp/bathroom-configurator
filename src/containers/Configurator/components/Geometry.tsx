@@ -48,7 +48,7 @@ function Geometry( { colors, path }: IProps ) {
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
         ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.7;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.25;
 
         if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||

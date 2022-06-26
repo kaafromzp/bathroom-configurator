@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import React, { Suspense } from 'react';
-import { Provider } from 'react-redux';
+import { connect, ConnectedProps, Provider } from 'react-redux';
 import { store } from '../../redux/store';
 import { Layers, sRGBEncoding } from 'three';
 import Controls from './components/Controls';
@@ -9,20 +9,30 @@ import Loader from '../Loader';
 import Geometry from './components/Geometry';
 import Materials from './components/Materials';
 import { isMobile } from 'react-device-detect';
+import Icons from './components/Icons';
+import { ConfiguratorState } from '../../redux';
 
 const layers = new Layers();
 layers.disableAll();
 
-function Configurator() {
+interface IOwnProps {};
+interface IProps extends IReduxProps, IOwnProps {};
+
+function Configurator( { isLocked }: IProps ) {
 
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
       <Canvas
         camera = { {
           position: [
-            -0.2988704413196319,
-            1.6731538252262097,
-            3.50194365037641
+            2.09,
+            1.67,
+            1.34
+          ],
+          rotation: [
+            -0.245,
+            0.294,
+            0.072
           ]
         } }
         gl={ {
@@ -34,7 +44,7 @@ function Configurator() {
           precision: isMobile ? 'mediump' : 'highp',
           outputEncoding: sRGBEncoding
         } }
-        frameloop='demand'
+        // frameloop='demand'
         dpr={ window.devicePixelRatio || 1 }
         raycaster={ { layers } }
       >
@@ -50,13 +60,22 @@ function Configurator() {
             </Suspense>
             <Materials/>
             <Controls />
+            {isLocked && <Icons/>}
           </Composer>
         </Provider>
-      </Canvas>;
+      </Canvas>
     </div>
   );
 }
 
-export default Configurator;
+function mapStateToProps( state: { configurator : ConfiguratorState} ) {
+  const { configurator: { isLocked } } = state;
+
+  return { isLocked };
+}
+
+const connector = connect( mapStateToProps );
+type IReduxProps = ConnectedProps<typeof connector>
+export default connector( Configurator );
 
 

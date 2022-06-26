@@ -1,2 +1,2 @@
-import EditModal from './EditModal';
-export { EditModal };
+import ColorPicker from './ColorPicker';
+export { ColorPicker };

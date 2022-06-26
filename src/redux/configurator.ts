@@ -6,11 +6,13 @@ export type colors = {[key: string]: RGBColor}
 export interface ConfiguratorState {
   selectedObject: string | null;
   colors: colors;
+  isLocked: boolean;
   path: string;
 }
 
 const initialState: ConfiguratorState = {
   selectedObject: null,
+  isLocked: false,
   colors: {},
   path: 'assets/scene1/'
 };
@@ -25,6 +27,9 @@ export const configuratorSlice = createSlice( {
     },
     setColors: ( state, action: PayloadAction<colors> ) => {
       state.colors = action.payload;
+    },
+    setLocked: ( state, action: PayloadAction<boolean> ) => {
+      state.isLocked = action.payload;
     },
     setColorById: ( state, action: PayloadAction<{uuid: string, color: RGBColor}> ) => {
       state.colors = { ...state.colors, [ action.payload.uuid ]: action.payload.color };
@@ -42,7 +47,14 @@ export const configuratorSlice = createSlice( {
   // }
 } );
 
-export const { setSelectedObject, setColors, setColorById, deleteColorById, setPath } = configuratorSlice.actions;
+export const {
+  setSelectedObject,
+  setColors,
+  setColorById,
+  deleteColorById,
+  setPath,
+  setLocked
+} = configuratorSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -62,4 +74,4 @@ export const { setSelectedObject, setColors, setColorById, deleteColorById, setP
 // };
 
 export default configuratorSlice.reducer;
-( window as any ).configuratorSlice = configuratorSlice;
+// ( window as any ).configuratorSlice = configuratorSlice;
