@@ -1,11 +1,27 @@
 import { Html } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import React from 'react';
+import { Vector3 } from 'three';
 import './index.css';
 
 function Loader() {
-  return <Html center>
-    {/* eslint-disable-next-line max-len */}
-    <div className='spinner'><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  const { camera: { position, rotation } } = useThree();
+
+  return <Html center position={ position.clone().add( new Vector3( 0, 0, -1 ).applyEuler( rotation ) ) }>
+    <div className='spinner'>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+      <div/>
+    </div>
   </Html>;
 }
 

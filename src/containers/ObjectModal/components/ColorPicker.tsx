@@ -1,13 +1,11 @@
 /* eslint-disable global-require */
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-// import ReactModal from 'react-modal';
 import {
   useAppDispatch,
   ConfiguratorState,
   setColorById,
   deleteColorById
-  // setSelectedObject
 } from '../../../redux';
 import { SvgRender } from '../../SvgRender';
 import { getRandomInt } from '../../../helpers';
@@ -16,6 +14,8 @@ import { RGBColor } from '../../../decl';
 import './index.css';
 import './input.css';
 import { Html } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
+import { Mesh } from 'three';
 
 interface IOwnProps {
   uuid: string;
@@ -28,19 +28,27 @@ const dice = require( '../../../icons/dice.svg' ) as string;
 const rotate = require( '../../../icons/rotate-left.svg' ) as string;
 const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
 
-const ColorPicker = ( { position, selectedObject, color }: IProps ) => {
+const ColorPicker = ( { position, selectedObject, color, uuid }: IProps ) => {
   const [showSettings, setShowSettings] = useState( false );
   const [toggling, setToggling] = useState( false );
-
   const dispatch = useAppDispatch();
 
-  const toggleIcon = () => {
+  const changeIcon = ( value: boolean ) => {
     setToggling( true );
     setTimeout( () => {
-      setShowSettings( ( v ) => !v );
+      setShowSettings( value );
       setToggling( false );
     }, 700 );
   };
+
+  useEffect( () => {
+
+    if ( false
+    // viewport offset for ColorPicker is near the center of the screen
+    ) {
+      changeIcon( true );
+    }
+  }, [] );
 
   const handleClickRandom = useCallback( () => {
     dispatch( setColorById( {
@@ -70,32 +78,46 @@ const ColorPicker = ( { position, selectedObject, color }: IProps ) => {
     ]
   );
 
+  const [hidden, set] = useState( false );
+  const [occludeArray, setOccludeArray] = useState( [] as any[] );
+  const { scene } = useThree();
+
+  useEffect( () => {
+    const arr = [] as any[];
+    scene.traverse( ( n ) => {
+      if ( ( n as Mesh ).isMesh ) {
+        arr.push( { current: n } );
+      }
+
+      ;
+    } );
+    setOccludeArray( arr );
+  }, [scene] );
+
   return (
-    // <ReactModal
-    //   ariaHideApp={ false }
-    //   onRequestClose={ () => {
-    //     dispatch( setSelectedObject( null ) );
-    //   } }
-    //   overlayClassName={ 'myOverlay' }
-    //   className={ 'myModal' }
-    //   isOpen={ Boolean( selectedObject ) }
-    //   closeTimeoutMS={ 10 }
-    // >
     <Html position={ [
       position.x,
       position.y,
       position.z
-    ] }>
+    ] }
+    style={ {
+      transition: 'all 0.25s',
+      opacity: hidden ? 0 : 1
+    } }
+    occlude={ occludeArray }
+    // @ts-ignore
+    onOcclude={ set }
+    >
       <div className={ `${ toggling ? 'toggling' : '' }` }>
         <SvgRender
           src={ showSettings ? closeIcon : pen }
-          onClick ={ toggleIcon }
+          // onClick ={ toggleIcon }
           wrapperClassName={ `svgRender swing ${ showSettings ? 'close' : 'edit' }` }
           style={ { width: '50px' } }
         />
       </div>
 
-      {/* {showSettings && (
+      {showSettings && (
         <div className='editModalContent'>
           <div className='color-inputs'>
             <div className='flex'>
@@ -142,10 +164,9 @@ const ColorPicker = ( { position, selectedObject, color }: IProps ) => {
             style={ { width: '50px' } }
           />
         </div>
-      )} */}
-    </Html>
+      )}
 
-  // </ReactModal >
+    </Html>
   );
 };
 

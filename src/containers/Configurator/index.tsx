@@ -13,17 +13,17 @@ import Icons from './components/Icons';
 import { ConfiguratorState } from '../../redux';
 
 const layers = new Layers();
-layers.disableAll();
+layers.set( 2 );
 
-interface IOwnProps {};
-interface IProps extends IReduxProps, IOwnProps {};
+interface IOwnProps { };
+interface IProps extends IReduxProps, IOwnProps { };
 
 function Configurator( { isLocked }: IProps ) {
 
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
       <Canvas
-        camera = { {
+        camera={ {
           position: [
             2.09,
             1.67,
@@ -44,7 +44,6 @@ function Configurator( { isLocked }: IProps ) {
           precision: isMobile ? 'mediump' : 'highp',
           outputEncoding: sRGBEncoding
         } }
-        // frameloop='demand'
         dpr={ window.devicePixelRatio || 1 }
         raycaster={ { layers } }
       >
@@ -55,12 +54,12 @@ function Configurator( { isLocked }: IProps ) {
         ] } />
         <Provider store={ store }>
           <Composer>
-            <Suspense fallback={ <Loader/> }>
-              <Geometry/>
+            <Suspense fallback={ <Loader /> }>
+              <Geometry />
             </Suspense>
-            <Materials/>
+            <Materials />
             <Controls />
-            {isLocked && <Icons/>}
+            {isLocked && <Icons />}
           </Composer>
         </Provider>
       </Canvas>
@@ -68,7 +67,7 @@ function Configurator( { isLocked }: IProps ) {
   );
 }
 
-function mapStateToProps( state: { configurator : ConfiguratorState} ) {
+function mapStateToProps( state: { configurator: ConfiguratorState } ) {
   const { configurator: { isLocked } } = state;
 
   return { isLocked };

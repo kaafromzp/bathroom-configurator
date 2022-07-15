@@ -20,8 +20,7 @@ function Geometry( { colors, path }: IProps ) {
   const { scene: model } = useGLTF( `${ path }scene.glb`, true );
   const { set } = useThree();
   const envMap = useLoader( ImageBitmapLoader, `${ path }envMap.jpg` );
-  const { gl, scene, invalidate } = useThree();
-  ( window as any ).scene = scene;
+  const { gl, scene } = useThree();
   useMemo( () => {
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
@@ -41,7 +40,6 @@ function Geometry( { colors, path }: IProps ) {
         }
       }
     } );
-    invalidate();
   }, [colors] );
 
   useEffect( () => {

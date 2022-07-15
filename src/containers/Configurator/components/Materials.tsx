@@ -42,7 +42,7 @@ function Materials( { path }:IProps ) {
     a();
   }, [path] );
   const [imageBitmaps, setImageBitmaps] = useState( [] as ImageBitmap[] );
-  const { scene, invalidate } = useThree();
+  const { scene } = useThree();
   const { materials } = useGraph( scene );
 
   useEffect( () => {
@@ -98,7 +98,6 @@ function Materials( { path }:IProps ) {
         }
       }
 
-      invalidate();
     };
     a();
   }, [
@@ -111,9 +110,9 @@ function Materials( { path }:IProps ) {
 }
 
 function mapStateToProps( state: { configurator : ConfiguratorState} ) {
-  const { configurator: { colors, path } } = state;
+  const { configurator: { path } } = state;
 
-  return { colors, path };
+  return { path };
 }
 
 const connector = connect( mapStateToProps );
