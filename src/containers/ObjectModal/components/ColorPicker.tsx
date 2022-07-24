@@ -1,11 +1,12 @@
 /* eslint-disable global-require */
-import { ChangeEvent, useCallback, useState, useEffect } from 'react';
+import { ChangeEvent, useCallback, useState, useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   useAppDispatch,
   ConfiguratorState,
   setColorById,
-  deleteColorById
+  deleteColorById,
+  setSelectedObject
 } from '../../../redux';
 import { SvgRender } from '../../SvgRender';
 import { getRandomInt } from '../../../helpers';
@@ -16,6 +17,7 @@ import './input.css';
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { Mesh } from 'three';
+import { setLocked } from '../../../redux/configurator';
 
 interface IOwnProps {
   uuid: string;
@@ -28,52 +30,76 @@ const dice = require( '../../../icons/dice.svg' ) as string;
 const rotate = require( '../../../icons/rotate-left.svg' ) as string;
 const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
 
-const ColorPicker = ( { position, selectedObject, color, uuid }: IProps ) => {
-  const [showSettings, setShowSettings] = useState( false );
+const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProps ) => {
+  const ref = useRef( null );
   const [toggling, setToggling] = useState( false );
   const dispatch = useAppDispatch();
+  const { gl: { domElement } } = useThree();
 
-  const changeIcon = ( value: boolean ) => {
-    setToggling( true );
-    setTimeout( () => {
-      setShowSettings( value );
-      setToggling( false );
-    }, 700 );
-  };
+  const onCanvasClick = useCallback( () => {
+    if ( isLocked ) {
+      const bodyRect = document.body.getBoundingClientRect();
+      // @ts-ignore
+      const elemRect = ref?.current?.getBoundingClientRect();
+      const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
+      const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
+      if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
+     Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
+      ) {
+        dispatch( setSelectedObject( uuid ) );
+        document.exitPointerLock();
+        dispatch( setLocked( false ) );
+      }
+    }
+  }, [
+    dispatch,
+    isLocked,
+    uuid
+  ] );
 
   useEffect( () => {
+    window.addEventListener( 'mousedown', onCanvasClick );
 
-    if ( false
-    // viewport offset for ColorPicker is near the center of the screen
-    ) {
-      changeIcon( true );
+    return () => window.removeEventListener( 'mousedown', onCanvasClick );
+  }, [onCanvasClick] );
+
+  const onClick = useCallback( () => {
+    if ( uuid === selectedObject ) {
+      dispatch( setSelectedObject( null ) );
+      domElement.requestPointerLock();
+      dispatch( setLocked( true ) );
     }
-  }, [] );
+  }, [
+    dispatch,
+    uuid,
+    selectedObject,
+    domElement
+  ] );
 
   const handleClickRandom = useCallback( () => {
     dispatch( setColorById( {
-      uuid: selectedObject as string,
+      uuid,
       color: {
         r: getRandomInt( 0, 255 ),
         g: getRandomInt( 0, 255 ),
         b: getRandomInt( 0, 255 )
       }
     } ) );
-  }, [dispatch, selectedObject] );
+  }, [dispatch, uuid] );
 
   const handleClearColor = useCallback( () => {
-    dispatch( deleteColorById( { uuid: selectedObject as string } ) );
-  }, [dispatch, selectedObject] );
+    dispatch( deleteColorById( { uuid } ) );
+  }, [dispatch, uuid] );
 
   const handleChangeColor = useCallback(
     ( letter: keyof RGBColor ) => ( e: ChangeEvent<HTMLInputElement> ) => {
       dispatch( setColorById( {
-        uuid: selectedObject as string,
-        color: { ...color, [ letter ]: e.target.value }
+        uuid,
+        color: { ...color, [ letter ]: Number( e.target.value ) }
       } ) );
     }, [
       dispatch,
-      selectedObject,
+      uuid,
       color
     ]
   );
@@ -95,7 +121,7 @@ const ColorPicker = ( { position, selectedObject, color, uuid }: IProps ) => {
   }, [scene] );
 
   return (
-    <Html position={ [
+    <Html ref = { ref } position={ [
       position.x,
       position.y,
       position.z
@@ -110,14 +136,14 @@ const ColorPicker = ( { position, selectedObject, color, uuid }: IProps ) => {
     >
       <div className={ `${ toggling ? 'toggling' : '' }` }>
         <SvgRender
-          src={ showSettings ? closeIcon : pen }
-          // onClick ={ toggleIcon }
-          wrapperClassName={ `svgRender swing ${ showSettings ? 'close' : 'edit' }` }
+          src={ uuid === selectedObject ? closeIcon : pen }
+          onClick ={ onClick }
+          wrapperClassName={ `svgRender swing ${ uuid === selectedObject ? 'close' : 'edit' }` }
           style={ { width: '50px' } }
         />
       </div>
 
-      {showSettings && (
+      {( uuid === selectedObject ) && (
         <div className='editModalContent'>
           <div className='color-inputs'>
             <div className='flex'>
@@ -170,11 +196,12 @@ const ColorPicker = ( { position, selectedObject, color, uuid }: IProps ) => {
   );
 };
 
-function mapStateToProps( state: { configurator : ConfiguratorState} ) {
-  const { configurator: { selectedObject } } = state;
-  const color = state.configurator.colors[ selectedObject || '' ] || { r: 255, g: 255, b: 255 };
+function mapStateToProps( state: { configurator : ConfiguratorState}, props: IOwnProps ) {
+  const { uuid } = props;
+  const { configurator: { isLocked, selectedObject } } = state;
+  const color = state.configurator.colors[ uuid || '' ] || { r: 255, g: 255, b: 255 };
 
-  return { selectedObject, color };
+  return { isLocked, selectedObject, color };
 }
 
 const connector = connect( mapStateToProps );

@@ -5,6 +5,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import {
   CanvasTexture,
   ImageBitmapLoader,
+  Material,
   Mesh,
   MeshStandardMaterial,
   PMREMGenerator,
@@ -21,10 +22,45 @@ function Geometry( { colors, path }: IProps ) {
   const { set } = useThree();
   const envMap = useLoader( ImageBitmapLoader, `${ path }envMap.jpg` );
   const { gl, scene } = useThree();
+
   useMemo( () => {
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
-        if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
+        if ( true || ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'celling' ) ||
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'table_bottom' )
+        ) {
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.r =
+          colors[ ( ( obj as Mesh ).material as Material ).name ]
+            ? colors[ ( ( obj as Mesh ).material as Material ).name ].r / 255
+            : 1;
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.g =
+          colors[ ( ( obj as Mesh ).material as Material ).name ]
+            ? colors[ ( ( obj as Mesh ).material as Material ).name ].g / 255
+            : 1;
+          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.b =
+          colors[ ( ( obj as Mesh ).material as Material ).name ]
+            ? colors[ ( ( obj as Mesh ).material as Material ).name ].b / 255
+            : 1;
+
+          ( obj as Mesh ).layers.enable( 2 );
+        }
+
+        if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ) {
+          ( obj as Mesh ).layers.enable( 3 );
+        }
+      }
+    } );
+  }, [colors, model] );
+
+  useEffect( () => {
+    model.traverse( ( obj ) => {
+      if ( ( obj as Mesh ).isMesh ) {
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.25;
+
+        if ( true || ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'celling' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'table_bottom' )
@@ -38,29 +74,9 @@ function Geometry( { colors, path }: IProps ) {
 
           ( obj as Mesh ).layers.enable( 2 );
         }
-      }
-    } );
-  }, [colors] );
 
-  useEffect( () => {
-    model.traverse( ( obj ) => {
-      if ( ( obj as Mesh ).isMesh ) {
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.25;
-
-        if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'celling' ) ||
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'table_bottom' )
-        ) {
-          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.r =
-          colors[ obj.uuid ] ? colors[ obj.uuid ].r / 255 : 1;
-          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.g =
-          colors[ obj.uuid ] ? colors[ obj.uuid ].g / 255 : 1;
-          ( ( obj as Mesh ).material as MeshStandardMaterial ).color.b =
-          colors[ obj.uuid ] ? colors[ obj.uuid ].b / 255 : 1;
-
-          ( obj as Mesh ).layers.enable( 2 );
+        if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ) {
+          ( obj as Mesh ).layers.enable( 3 );
         }
       }
     } );

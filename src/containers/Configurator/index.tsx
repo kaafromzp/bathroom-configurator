@@ -18,7 +18,7 @@ layers.set( 2 );
 interface IOwnProps { };
 interface IProps extends IReduxProps, IOwnProps { };
 
-function Configurator( { isLocked }: IProps ) {
+function Configurator( { isLocked, selectedObject }: IProps ) {
 
   return (
     <div style={ { width: '100hw', height: '100vh' } }>
@@ -59,7 +59,7 @@ function Configurator( { isLocked }: IProps ) {
             </Suspense>
             <Materials />
             <Controls />
-            {isLocked && <Icons />}
+            {( isLocked || ( !isLocked && selectedObject ) ) && <Icons />}
           </Composer>
         </Provider>
       </Canvas>
@@ -68,9 +68,9 @@ function Configurator( { isLocked }: IProps ) {
 }
 
 function mapStateToProps( state: { configurator: ConfiguratorState } ) {
-  const { configurator: { isLocked } } = state;
+  const { configurator: { isLocked, selectedObject } } = state;
 
-  return { isLocked };
+  return { isLocked, selectedObject };
 }
 
 const connector = connect( mapStateToProps );

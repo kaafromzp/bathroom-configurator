@@ -1,14 +1,14 @@
 [
   {
-    "id": "58cc9a14-6659-4a6f-9dd9-54f4410bbd3a",
+    "id": "wall_front",
     "position": {"x": 2.7974, "y": 1.67, "z": -0.477}
   },
   {
-    "id": "4e63ac85-f5a7-4498-84ba-317ffebfea18",
-    "position": {"x": -0.317765, "y": 0.85, "z": -1.218}
+    "id": "table_bottom",
+    "position": {"x": -0.317765, "y": 0.85, "z": -1.198}
   },
   {
-    "id": "5a99e0dd-4e37-4966-97ea-eab783f81d90",
+    "id": "wall_back",
     "position": {"x": 0.04, "y": 1.67, "z": 1.8343}
   }
 ]
