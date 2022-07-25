@@ -88,13 +88,13 @@ function Controls( { isLocked, selectedObject }: IProps ) {
     window.addEventListener( 'keydown', onKeyDown );
 
     return () => window.removeEventListener( 'keydown', onKeyDown );
-  }, [isLocked, onKeyDown] );
+  }, [onKeyDown] );
 
   useEffect( () => {
     window.addEventListener( 'keyup', onKeyUp );
 
     return () => window.removeEventListener( 'keyup', onKeyUp );
-  }, [isLocked, onKeyUp] );
+  }, [onKeyUp] );
 
   useFrame( ( state, delta ) => {
     if ( !isLocked ) {

@@ -59,7 +59,7 @@ function Configurator( { isLocked, selectedObject }: IProps ) {
             </Suspense>
             <Materials />
             <Controls />
-            {( true || ( !isLocked && selectedObject ) ) && <Icons />}
+            {( isLocked || ( !isLocked && selectedObject ) ) && <Icons />}
           </Composer>
         </Provider>
       </Canvas>

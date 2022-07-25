@@ -38,21 +38,23 @@ function App( { isLocked, selectedObject }: IProps ) {
           color: 'red'
         } }>
           <p style={ { fontSize: '36px' } }>Click to go</p>
+          <br/>
           <p>
-            "Move: WASD or ARROWS"
+            Move: WASD or ARROWS
             <br/>
+            Look: MOUSE or TOUCHPAD
             <br/>
-            "Look: MOUSE or TOUCHPAD"
+            Use: CLICK or E
           </p>
         </div>
       </div>}
       {isLocked && (
-        <SvgRender
-          src={ viewfinder }
-          style={ { position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%', left: '50%' } }
-        />
+        // <SvgRender
+        //   src={ viewfinder }
+        //   style={ { position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%', left: '50%' } }
+        // />
+        <div className='circle'/>
       )}
-      <div className='circle'/>
     </>
   );
 }

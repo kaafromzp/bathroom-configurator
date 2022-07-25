@@ -53,8 +53,8 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       const elemRect = ref?.current?.getBoundingClientRect();
       const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
       const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
-      if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
-        Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
+      if ( Math.abs( ( offsetX + 25 ) / window.innerWidth - 0.5 ) < 0.05 &&
+        Math.abs( ( offsetY + 25 ) / window.innerHeight - 0.5 ) < 0.05
       ) {
         setHighlighted( true );
         // highlight svg icon color
@@ -65,14 +65,14 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   } );
 
   const onCanvasClick = useCallback( () => {
-    if ( isLocked ) {
+    if ( isLocked && !toggling ) {
       const bodyRect = document.body.getBoundingClientRect();
       // @ts-ignore
       const elemRect = ref?.current?.getBoundingClientRect();
       const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
       const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
-      if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
-        Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
+      if ( Math.abs( ( offsetX + 25 ) / window.innerWidth - 0.5 ) < 0.05 &&
+        Math.abs( ( offsetY + 25 ) / window.innerHeight - 0.5 ) < 0.05
       ) {
         changeIcon();
         dispatch( setSelectedObject( uuid ) );
@@ -81,25 +81,73 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       }
     }
   }, [
+    toggling,
     dispatch,
     isLocked,
     uuid
   ] );
 
+  const onKeyDown = useCallback( ( e: KeyboardEvent ) => {
+    if ( e.code === 'KeyE' && !toggling ) {
+      if ( isLocked ) {
+        const bodyRect = document.body.getBoundingClientRect();
+        // @ts-ignore
+        const elemRect = ref?.current?.getBoundingClientRect();
+        const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
+        const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
+        if ( Math.abs( ( offsetX + 25 ) / window.innerWidth - 0.5 ) < 0.05 &&
+        Math.abs( ( offsetY + 25 ) / window.innerHeight - 0.5 ) < 0.05
+        ) {
+          changeIcon();
+          dispatch( setSelectedObject( uuid ) );
+          document.exitPointerLock();
+          dispatch( setLocked( false ) );
+        }
+      } else {
+        changeIcon();
+        if ( uuid === selectedObject ) {
+          dispatch( setSelectedObject( null ) );
+          domElement.requestPointerLock();
+          dispatch( setLocked( true ) );
+        }
+      }
+    }
+  }, [
+    toggling,
+    dispatch,
+    isLocked,
+    uuid,
+    selectedObject,
+    domElement
+  ] );
+
   useEffect( () => {
     window.addEventListener( 'mousedown', onCanvasClick );
 
-    return () => window.removeEventListener( 'mousedown', onCanvasClick );
+    return () => {
+      window.removeEventListener( 'mousedown', onCanvasClick );
+    };
   }, [onCanvasClick] );
 
+  useEffect( () => {
+    window.addEventListener( 'keydown', onKeyDown );
+
+    return () => {
+      window.removeEventListener( 'keydown', onKeyDown );
+    };
+  }, [onKeyDown] );
+
   const onClick = useCallback( () => {
-    changeIcon();
-    if ( uuid === selectedObject ) {
-      dispatch( setSelectedObject( null ) );
-      domElement.requestPointerLock();
-      dispatch( setLocked( true ) );
+    if ( !toggling ) {
+      changeIcon();
+      if ( uuid === selectedObject ) {
+        dispatch( setSelectedObject( null ) );
+        domElement.requestPointerLock();
+        dispatch( setLocked( true ) );
+      }
     }
   }, [
+    toggling,
     dispatch,
     uuid,
     selectedObject,
@@ -158,7 +206,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
     style={ {
       display: 'flex',
       transition: 'all 0.25s',
-      opacity: hidden ? 1 : 1
+      opacity: hidden ? 0 : 1
     } }
     occlude={ occludeArray }
     // @ts-ignore
