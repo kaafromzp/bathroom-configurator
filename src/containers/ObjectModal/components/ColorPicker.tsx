@@ -33,6 +33,7 @@ const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
 const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProps ) => {
   const ref = useRef( null );
   const [toggling, setToggling] = useState( false );
+  const [highlighted, setHighlighted] = useState( false );
   const dispatch = useAppDispatch();
   const { gl: { domElement } } = useThree();
 
@@ -41,6 +42,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
     setTimeout( () => {
       // setShowSettings( value );
       setToggling( false );
+      setHighlighted( false );
     }, 700 );
   };
 
@@ -54,7 +56,10 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
         Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
       ) {
+        setHighlighted( true );
         // highlight svg icon color
+      } else if ( Boolean( highlighted ) ) {
+        setHighlighted( false );
       }
     }
   } );
@@ -151,8 +156,9 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       position.z
     ] }
     style={ {
+      display: 'flex',
       transition: 'all 0.25s',
-      opacity: hidden ? 0 : 1
+      opacity: hidden ? 1 : 1
     } }
     occlude={ occludeArray }
     // @ts-ignore
@@ -162,7 +168,9 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
         <SvgRender
           src={ uuid === selectedObject ? closeIcon : pen }
           onClick={ onClick }
-          wrapperClassName={ `svgRender swing ${ uuid === selectedObject ? 'close' : 'edit' }` }
+          wrapperClassName={ `
+          svgRender swing ${ uuid === selectedObject ? 'close' : 'edit' } ${ highlighted ? 'highlighted' : '' }
+          ` }
           style={ { width: '50px' } }
         />
       </div>

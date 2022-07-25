@@ -162,3 +162,7 @@
   -webkit-animation: toggling 1s ease 0s 1;
   animation: toggling 1s ease 0s 1;
 }
+
+.highlighted * {
+  fill: yellow
+}

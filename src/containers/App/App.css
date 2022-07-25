@@ -2,6 +2,17 @@
   text-align: center;
 }
 
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 100%;
+  background: red;
+  z-index: 1111111111111111;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
