@@ -11,19 +11,19 @@ import {
 import { SvgRender } from '../../SvgRender';
 import { getRandomInt } from '../../../helpers';
 import { RGBColor } from '../../../decl';
-
-import './index.css';
-import './input.css';
 import { Html } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 import { setLocked } from '../../../redux/configurator';
+import './index.css';
+import './input.css';
+
 
 interface IOwnProps {
   uuid: string;
-  position: {x: number; y: number; z: number;};
+  position: { x: number; y: number; z: number; };
 };
-interface IProps extends IReduxProps, IOwnProps {};
+interface IProps extends IReduxProps, IOwnProps { };
 
 const pen = require( '../../../icons/pen.svg' ) as string;
 const dice = require( '../../../icons/dice.svg' ) as string;
@@ -36,6 +36,29 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   const dispatch = useAppDispatch();
   const { gl: { domElement } } = useThree();
 
+  const changeIcon = () => {
+    setToggling( true );
+    setTimeout( () => {
+      // setShowSettings( value );
+      setToggling( false );
+    }, 700 );
+  };
+
+  useFrame( () => {
+    if ( isLocked ) {
+      const bodyRect = document.body.getBoundingClientRect();
+      // @ts-ignore
+      const elemRect = ref?.current?.getBoundingClientRect();
+      const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
+      const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
+      if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
+        Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
+      ) {
+        // highlight svg icon color
+      }
+    }
+  } );
+
   const onCanvasClick = useCallback( () => {
     if ( isLocked ) {
       const bodyRect = document.body.getBoundingClientRect();
@@ -44,8 +67,9 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
       const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
       if ( Math.abs( offsetX / window.innerWidth - 0.5 ) < 0.05 &&
-     Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
+        Math.abs( offsetY / window.innerHeight - 0.5 ) < 0.05
       ) {
+        changeIcon();
         dispatch( setSelectedObject( uuid ) );
         document.exitPointerLock();
         dispatch( setLocked( false ) );
@@ -64,6 +88,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   }, [onCanvasClick] );
 
   const onClick = useCallback( () => {
+    changeIcon();
     if ( uuid === selectedObject ) {
       dispatch( setSelectedObject( null ) );
       domElement.requestPointerLock();
@@ -90,7 +115,6 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   const handleClearColor = useCallback( () => {
     dispatch( deleteColorById( { uuid } ) );
   }, [dispatch, uuid] );
-
   const handleChangeColor = useCallback(
     ( letter: keyof RGBColor ) => ( e: ChangeEvent<HTMLInputElement> ) => {
       dispatch( setColorById( {
@@ -121,7 +145,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   }, [scene] );
 
   return (
-    <Html ref = { ref } position={ [
+    <Html ref={ ref } position={ [
       position.x,
       position.y,
       position.z
@@ -137,7 +161,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
       <div className={ `${ toggling ? 'toggling' : '' }` }>
         <SvgRender
           src={ uuid === selectedObject ? closeIcon : pen }
-          onClick ={ onClick }
+          onClick={ onClick }
           wrapperClassName={ `svgRender swing ${ uuid === selectedObject ? 'close' : 'edit' }` }
           style={ { width: '50px' } }
         />
@@ -179,13 +203,13 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
           </div>
           <SvgRender
             src={ dice }
-            onClick ={ handleClickRandom }
+            onClick={ handleClickRandom }
             wrapperClassName='svgRender random'
             style={ { width: '50px' } }
           />
           <SvgRender
             src={ rotate }
-            onClick ={ handleClearColor }
+            onClick={ handleClearColor }
             wrapperClassName='svgRender cancel'
             style={ { width: '50px' } }
           />
@@ -196,7 +220,7 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   );
 };
 
-function mapStateToProps( state: { configurator : ConfiguratorState}, props: IOwnProps ) {
+function mapStateToProps( state: { configurator: ConfiguratorState }, props: IOwnProps ) {
   const { uuid } = props;
   const { configurator: { isLocked, selectedObject } } = state;
   const color = state.configurator.colors[ uuid || '' ] || { r: 255, g: 255, b: 255 };
