@@ -31,7 +31,7 @@ const rotate = require( '../../../icons/rotate-left.svg' ) as string;
 const closeIcon = require( '../../../icons/circle-xmark.svg' ) as string;
 
 const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProps ) => {
-  const ref = useRef( null );
+  const ref = useRef<null | HTMLDivElement>( null );
   const [toggling, setToggling] = useState( false );
   const [highlighted, setHighlighted] = useState( false );
   const dispatch = useAppDispatch();
@@ -49,7 +49,6 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   useFrame( () => {
     if ( isLocked ) {
       const bodyRect = document.body.getBoundingClientRect();
-      // @ts-ignore
       const elemRect = ref?.current?.getBoundingClientRect();
       const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
       const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
@@ -67,7 +66,6 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
   const onCanvasClick = useCallback( () => {
     if ( isLocked && !toggling ) {
       const bodyRect = document.body.getBoundingClientRect();
-      // @ts-ignore
       const elemRect = ref?.current?.getBoundingClientRect();
       const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
       const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;
@@ -91,7 +89,6 @@ const ColorPicker = ( { isLocked, position, selectedObject, color, uuid }: IProp
     if ( e.code === 'KeyE' && !toggling ) {
       if ( isLocked ) {
         const bodyRect = document.body.getBoundingClientRect();
-        // @ts-ignore
         const elemRect = ref?.current?.getBoundingClientRect();
         const offsetY = elemRect?.top || 0 - bodyRect?.top || 0;
         const offsetX = elemRect?.left || 0 - bodyRect?.left || 0;

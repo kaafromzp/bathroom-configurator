@@ -49,11 +49,11 @@ function App( { isLocked, selectedObject }: IProps ) {
         </div>
       </div>}
       {isLocked && (
-        // <SvgRender
-        //   src={ viewfinder }
-        //   style={ { position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%', left: '50%' } }
-        // />
-        <div className='circle'/>
+        <SvgRender
+          src={ viewfinder }
+          style={ { width: '20px', height: '20px', position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%', left: '50%' } }
+        />
+        // <div className='circle'/>
       )}
     </>
   );

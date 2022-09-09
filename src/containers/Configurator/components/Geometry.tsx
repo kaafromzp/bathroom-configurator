@@ -1,9 +1,11 @@
-import { useGLTF } from '@react-three/drei';
+import { useCubeTexture, useGLTF } from '@react-three/drei';
 import { useLoader, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   CanvasTexture,
+  EquirectangularReflectionMapping,
+  EquirectangularRefractionMapping,
   ImageBitmapLoader,
   Material,
   Mesh,
@@ -20,7 +22,14 @@ function Geometry( { colors, path }: IProps ) {
 
   const { scene: model } = useGLTF( `${ path }scene.glb`, true );
   const { set } = useThree();
-  const envMap = useLoader( ImageBitmapLoader, `${ path }envMap.jpg` );
+  const envMap = useCubeTexture( [
+    'envMapnx.jpg',
+    'envMapny.jpg',
+    'envMapnz.jpg',
+    'envMappx.jpg',
+    'envMappy.jpg',
+    'envMappz.jpg'
+  ], { path } );
   const { gl, scene } = useThree();
 
   useMemo( () => {
@@ -57,8 +66,8 @@ function Geometry( { colors, path }: IProps ) {
   useEffect( () => {
     model.traverse( ( obj ) => {
       if ( ( obj as Mesh ).isMesh ) {
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 1.2;
-        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.25;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).lightMapIntensity = 0.9;
+        ( ( obj as Mesh ).material as MeshStandardMaterial ).envMapIntensity = 0.2;
 
         if ( true || ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ||
         ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'wall' ) ||
@@ -75,6 +84,11 @@ function Geometry( { colors, path }: IProps ) {
           ( obj as Mesh ).layers.enable( 2 );
         }
 
+        if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'mirror' ) ) {
+          // ( ( obj as Mesh ).material as MeshStandardMaterial ).roughness = 0.15;
+          // ( ( obj as Mesh ).material as MeshStandardMaterial ).metalness = 0.9;
+
+        }
         if ( ( ( obj as Mesh ).material as MeshStandardMaterial ).name.includes( 'floor' ) ) {
           ( obj as Mesh ).layers.enable( 3 );
         }
@@ -86,13 +100,15 @@ function Geometry( { colors, path }: IProps ) {
 
   useMemo( () => {
     if ( envMap ) {
-      const gen = new PMREMGenerator( gl );
-      gen.compileEquirectangularShader();
-      const texture = new CanvasTexture( envMap );
-      const hdrCubeRenderTarget = gen.fromEquirectangular( texture );
-      texture.dispose();
-      gen.dispose();
-      scene.environment = hdrCubeRenderTarget.texture;
+
+      // const gen = new PMREMGenerator( gl );
+      // gen.compileEquirectangularShader();
+      // const texture = new CanvasTexture( envMap, EquirectangularRefractionMapping );
+      // const hdrCubeRenderTarget = gen.fromEquirectangular( texture );
+      // texture.dispose();
+      // gen.dispose();
+      // scene.environment = hdrCubeRenderTarget.texture;
+      scene.environment = envMap;
     }
   }, [
     envMap,

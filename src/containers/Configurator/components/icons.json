@@ -10,5 +10,13 @@
   {
     "id": "wall_back",
     "position": {"x": 0.04, "y": 1.67, "z": 1.8343}
+  },
+  {
+    "id": "floor",
+    "position": {"x": 0, "y": 0.05, "z": 0}
+  },
+  {
+    "id": "celling",
+    "position": {"x": 0, "y": 2.3, "z": 0}
   }
 ]

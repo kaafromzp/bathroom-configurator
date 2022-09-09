@@ -2,7 +2,7 @@ import { PointerLockControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Raycaster, Vector3, Quaternion, Mesh, Material } from 'three';
+import { Raycaster, Vector3, Quaternion, Mesh, Material, Euler } from 'three';
 import { ConfiguratorState } from '../../../redux';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setLocked } from '../../../redux/configurator';
@@ -19,10 +19,11 @@ raycaster.far = 1000;
 
 const down = new Vector3( 0, -1, 0 );
 const prevPosition = new Vector3();
+const currentPosition = new Vector3();
 
 const v3 = new Vector3();
 const q = new Quaternion();
-
+const eulerLeft = new Euler( 0, Math.PI / 2, 0 );
 const movementSpeed = 3;
 
 
@@ -106,26 +107,40 @@ function Controls( { isLocked, selectedObject }: IProps ) {
     v3.set( 0, 0, -actualMoveSpeed );
     q.set( 0, camera.quaternion.y, 0, camera.quaternion.w );
     prevPosition.copy( camera.position );
+    currentPosition.copy( camera.position );
     if ( moveForward ) {
-      camera.position.add( v3.clone().applyQuaternion( q ) );
+      currentPosition.add( v3.clone().applyQuaternion( q ) );
+      camera.position.add( v3.clone()
+        .multiplyScalar( 10 )
+        .applyQuaternion( q ) );
     }
     if ( moveBack ) {
-      camera.position.add( v3.clone().multiplyScalar( -1 )
+      currentPosition.add( v3.clone().multiplyScalar( -1 )
+        .applyQuaternion( q ) );
+      camera.position.add( v3.clone().multiplyScalar( -10 )
         .applyQuaternion( q ) );
     }
 
     if ( moveLeft ) {
-      camera.translateX( -actualMoveSpeed );
+      currentPosition.add( v3.clone()
+        .applyEuler( eulerLeft )
+        .applyQuaternion( q ) );
+      camera.translateX( -actualMoveSpeed * 10 );
     }
     if ( moveRight ) {
-      camera.translateX( actualMoveSpeed );
+      currentPosition.add( v3.clone().multiplyScalar( -1 )
+        .applyEuler( eulerLeft )
+        .applyQuaternion( q ) );
+      camera.translateX( actualMoveSpeed * 10 );
     }
 
     if ( moveForward || moveBack || moveLeft || moveRight ) {
       raycasterCollision.set( camera.position.clone(), down );
       const intersections = raycasterCollision.intersectObject( scene, true );
-      if ( !intersections.map( ( int ) => int.object )
+      if ( intersections.map( ( int ) => int.object )
         .filter( ( obj ) => ( ( obj as Mesh )?.material as Material )?.name === 'floor' ).length ) {
+        camera.position.copy( currentPosition );
+      } else {
         camera.position.copy( prevPosition );
       }
     }
