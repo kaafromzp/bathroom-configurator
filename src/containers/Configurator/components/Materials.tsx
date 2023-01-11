@@ -1,5 +1,5 @@
 import { useGraph, useThree } from '@react-three/fiber';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   CanvasTexture,

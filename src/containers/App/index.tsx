@@ -51,7 +51,14 @@ function App( { isLocked, selectedObject }: IProps ) {
       {isLocked && (
         <SvgRender
           src={ viewfinder }
-          style={ { width: '20px', height: '20px', position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%', left: '50%' } }
+          style={ {
+            width: '20px',
+            height: '20px',
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            top: '50%',
+            left: '50%'
+          } }
         />
         // <div className='circle'/>
       )}

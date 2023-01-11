@@ -1,16 +1,16 @@
 import { useCubeTexture, useGLTF } from '@react-three/drei';
-import { useLoader, useThree } from '@react-three/fiber';
-import React, { useEffect, useMemo } from 'react';
+import { useThree } from '@react-three/fiber';
+import { useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
-  CanvasTexture,
-  EquirectangularReflectionMapping,
-  EquirectangularRefractionMapping,
-  ImageBitmapLoader,
+  // CanvasTexture,
+  // EquirectangularReflectionMapping,
+  // EquirectangularRefractionMapping,
+  // ImageBitmapLoader,
   Material,
   Mesh,
   MeshStandardMaterial,
-  PMREMGenerator,
+  // PMREMGenerator,
   Scene
 } from 'three';
 import { ConfiguratorState } from '../../../redux/configurator';
@@ -96,6 +96,7 @@ function Geometry( { colors, path }: IProps ) {
     } );
     const s = new Scene().add( model );
     set( { scene: s } );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model] );
 
   useMemo( () => {
@@ -110,6 +111,7 @@ function Geometry( { colors, path }: IProps ) {
       // scene.environment = hdrCubeRenderTarget.texture;
       scene.environment = envMap;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     envMap,
     gl,
