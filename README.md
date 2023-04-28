@@ -4,7 +4,7 @@ An example of simple bathroom configurator app made on, react, three.js, @react-
 All materials are PBR. User is able to select color for the main objects on the scene
 ### Live demo
 
-Live preview: https://bathroom-configurator.herokuapp.com/
+Live preview: https://bathroom-configurator.netlify.app/
 
 ### Tech
 - [react] -  very common UI framework
